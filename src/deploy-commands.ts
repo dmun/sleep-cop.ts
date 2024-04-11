@@ -2,7 +2,7 @@ import { REST, Routes } from "discord.js";
 import { commands } from "./commands";
 import { config } from "./config";
 
-const commandsData = Object.values(commands).map((command) => command.data);
+const commandsData = Object.values(commands).map(command => command.data);
 
 const rest = new REST({ version: "10" }).setToken(config.SLEEP_COP_TOKEN);
 
@@ -13,6 +13,8 @@ type DeployCommandsProps = {
 export async function deployCommands({ guildId }: DeployCommandsProps) {
   try {
     console.log("Started refreshing application (/) commands.");
+
+    console.log(commandsData);
 
     await rest.put(
       Routes.applicationGuildCommands(config.SLEEP_COP_CLIENT_ID, guildId),
