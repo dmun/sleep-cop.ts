@@ -1,11 +1,4 @@
-import {
-	Client,
-	Colors,
-	Events,
-	GatewayIntentBits,
-	InteractionType,
-	PermissionFlagsBits,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, InteractionType } from "discord.js";
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
@@ -34,32 +27,20 @@ client.on(Events.GuildCreate, async guild => {
 	await deployCommands({ guildId: guild.id });
 });
 
+const memberId = "157063395969990656";
+
+function disconnectMember(memberId: string) {
+	client.guilds.cache.find(guild => {
+		guild.members.cache.forEach(member => {
+			if (member.id === memberId) {
+				member.voice.disconnect();
+			}
+		});
+	});
+}
+
 client.on(Events.InteractionCreate, async interaction => {
-	console.log(interaction.guildId);
-
-	const guild = client.guilds.cache.get("511184618976837672");
-
-	if (guild) {
-		console.log("actual", guild.id);
-		const bruh = guild.channels.cache
-			.filter(channel => channel.isVoiceBased())
-			.find(channel => {
-				if (channel.isVoiceBased()) {
-					channel.members.forEach(x => console.log(x.id));
-					const member = channel.members.find(
-						x => x.id === "157063395969990656",
-					);
-					member?.voice.disconnect();
-					console.log(member?.manageable);
-				}
-			});
-		console.log(bruh);
-
-		// guild.channels.cache.filter(guild => guild.members);
-		// client.guilds.cache.filter(guild =>
-		//   guild.members.cache.has(interaction.member!!.user.id),
-		// );
-	}
+	disconnectMember(memberId);
 
 	switch (interaction.type) {
 		case InteractionType.ApplicationCommand:
@@ -80,14 +61,6 @@ client.on(Events.InteractionCreate, async interaction => {
 			}
 			break;
 	}
-});
-
-client.on(Events.ChannelUpdate, interaction => {
-	console.log("feopwapfeafo", interaction);
-});
-
-client.on(Events.VoiceStateUpdate, interaction => {
-	console.log("gjopeapfjeaf", interaction);
 });
 
 function checktime() {
