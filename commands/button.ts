@@ -6,13 +6,12 @@ import {
   ButtonStyle,
   ActionRowBuilder,
   ModalBuilder,
-  TextInputAssertions,
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
 import type { Command } from "./command";
 
-export const ButtonCommand: Command = {
+export const buttonCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("button")
     .setDescription("fiopaepjiofewapjiofehuhuh"),

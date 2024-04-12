@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { deployCommands } from "../deploy-commands";
 import type { Command } from "./command";
 
-export const RefreshCommand: Command = {
+export const refreshCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("refreshcommands")
     .setDescription("Refreshes available slash commands"),

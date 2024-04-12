@@ -1,0 +1,14 @@
+import type {
+  CommandInteraction,
+  ModalSubmitInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
+
+export type Command = {
+  data: SlashCommandBuilder;
+  execute(interaction: CommandInteraction): void;
+};
+
+export type ModalSubmitHandler = {
+  execute(interaction: ModalSubmitInteraction): void;
+};

@@ -17,6 +17,6 @@
     "sqlite3": "^5.1.7"
   },
   "scripts": {
-    "dev": "bun run src/index.ts"
+    "dev": "bun run index.ts"
   }
 }
