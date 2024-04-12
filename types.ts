@@ -5,8 +5,15 @@ import type {
 } from "discord.js";
 
 export type Command = {
-  data: SlashCommandBuilder;
+  data:
+    | SlashCommandBuilder
+    | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
   execute(interaction: CommandInteraction): void;
+};
+
+export type InteractionHandler<T> = {
+  customId: string;
+  execute(interaction: T): void;
 };
 
 export type ModalSubmitHandler = {

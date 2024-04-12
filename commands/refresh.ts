@@ -1,6 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { deployCommands } from "../deploy-commands";
-import type { Command } from "./command";
+import type { Command } from "../types";
 
 export const refreshCommand: Command = {
   data: new SlashCommandBuilder()

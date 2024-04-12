@@ -1,10 +1,12 @@
 import type { ModalSubmitInteraction, CacheType } from "discord.js";
-import type { ModalSubmitHandler } from "../commands/command";
+import type { InteractionHandler } from "../types";
 import { Tags } from "../database";
 
-export const timeSubmitHandler: ModalSubmitHandler = {
+export const timeSubmitHandler: InteractionHandler<ModalSubmitInteraction> = {
+  customId: "timeSubmit",
   async execute(interaction: ModalSubmitInteraction<CacheType>) {
     const time = interaction.fields.getTextInputValue("input");
+    console.log(interaction.customId);
 
     const tag = await Tags.findOne({
       where: { username: interaction.user.username },

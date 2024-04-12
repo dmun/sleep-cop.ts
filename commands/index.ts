@@ -1,5 +1,5 @@
-import { buttonCommand } from "./button";
+import { setBedtimeCommand } from "./setbedtime";
 import { pingCommand } from "./ping";
 import { refreshCommand } from "./refresh";
 
-export default [pingCommand, refreshCommand, buttonCommand];
+export default [pingCommand, refreshCommand, setBedtimeCommand];

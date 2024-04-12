@@ -1,15 +1,8 @@
-import {
-  Client,
-  Collection,
-  Events,
-  GatewayIntentBits,
-  InteractionType,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, InteractionType } from "discord.js";
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
 import { Tags } from "./database";
-import handlers from "./handlers";
 import { timeSubmitHandler } from "./handlers/time-submit";
 
 const client = new Client({
