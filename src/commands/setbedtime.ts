@@ -7,6 +7,7 @@ import {
 	StringSelectMenuOptionBuilder,
 } from "discord.js";
 import type { Command } from "../types";
+import { Bedtimes } from "../database";
 
 export const setBedtimeCommand: Command = {
 	data: new SlashCommandBuilder()
@@ -60,6 +61,16 @@ export const setBedtimeCommand: Command = {
 		const hour = interaction.options.data.find(x => x.name === "hour")!!.value;
 		const minute = interaction.options.data.find(x => x.name === "minute")!!
 			.value;
+
+		await Bedtimes.upsert({
+			member_id: interaction.user.id,
+			hour: hour,
+			minute: minute,
+		});
+
+		console.log(
+			await Bedtimes.findOne({ where: { member_id: interaction.user.id } }),
+		);
 
 		interaction.reply({
 			content: `You selected a bed time of **${hour}:${minute}**!\n\nOn which days would you like to enforce it?`,

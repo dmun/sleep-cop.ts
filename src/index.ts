@@ -2,7 +2,7 @@ import { Client, Events, GatewayIntentBits, InteractionType } from "discord.js";
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
-import { Tags } from "./database";
+import { Bedtimes, Tags } from "./database";
 import { timeSubmitHandler } from "./handlers/time-submit";
 
 const client = new Client({
@@ -16,6 +16,7 @@ const client = new Client({
 
 client.once(Events.ClientReady, readyClient => {
 	Tags.sync();
+	Bedtimes.sync();
 	const permissions = 39584887996432;
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	console.log(
@@ -40,7 +41,8 @@ function disconnectMember(memberId: string) {
 }
 
 client.on(Events.InteractionCreate, async interaction => {
-	disconnectMember(memberId);
+	// disconnectMember(memberId);
+	console.log(interaction.type);
 
 	switch (interaction.type) {
 		case InteractionType.ApplicationCommand:
@@ -54,10 +56,14 @@ client.on(Events.InteractionCreate, async interaction => {
 			if (interaction.isButton()) {
 				interaction.update("bruh");
 			}
+
+			if (interaction.isStringSelectMenu()) {
+				timeSubmitHandler.execute(interaction);
+			}
+
 			break;
 		case InteractionType.ModalSubmit:
 			if (interaction.isModalSubmit()) {
-				timeSubmitHandler.execute(interaction);
 			}
 			break;
 	}
