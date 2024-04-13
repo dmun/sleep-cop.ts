@@ -1,9 +1,24 @@
-import { Client, Events, GatewayIntentBits, InteractionType } from "discord.js";
+import {
+	Client,
+	Events,
+	GatewayIntentBits,
+	InteractionType,
+	time,
+} from "discord.js";
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
 import { Bedtimes, Tags } from "./database";
 import { timeSubmitHandler } from "./handlers/time-submit";
+import {
+	AudioPlayerStatus,
+	NoSubscriberBehavior,
+	StreamType,
+	createAudioPlayer,
+	createAudioResource,
+	generateDependencyReport,
+	joinVoiceChannel,
+} from "@discordjs/voice";
 
 const client = new Client({
 	intents: [
@@ -11,6 +26,7 @@ const client = new Client({
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildVoiceStates,
 	],
 });
 
@@ -34,20 +50,61 @@ function disconnectMember(memberId: string) {
 	client.guilds.cache.find(guild => {
 		guild.members.cache.forEach(member => {
 			if (member.id === memberId) {
-				member.voice.disconnect();
+				// member.voice.disconnect();
+				const connection = joinVoiceChannel({
+					channelId: member.voice.channelId!!,
+					guildId: guild.id,
+					adapterCreator: guild.voiceAdapterCreator,
+					selfDeaf: false,
+				});
+
+				const player = createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Pause,
+					},
+				});
+				player.on("stateChange", (oldState, newState) => {
+					console.log(
+						`Audio player transitioned from ${oldState.status} to ${newState.status}`,
+					);
+				});
+
+				const resource = createAudioResource("./untitled.ogg", {
+					inputType: StreamType.Opus,
+					metadata: {
+						title: "DIOPJWAPJOIDAWJOPIWADJPADWIO",
+					},
+				});
+
+				resource.volume?.setVolume(0.5);
+
+				console.log("playable: ", player.checkPlayable());
+				player.unpause();
+				player.play(resource);
+				const subscription = connection.subscribe(player);
+				// console.log(generateDependencyReport());
+
+				// console.log(player.state);
+
+				// if (subscription) {
+				// 	setTimeout(() => {
+				// 		subscription.unsubscribe();
+				// 		connection.destroy();
+				// 	}, 5_000);
+				// }
 			}
 		});
 	});
 }
 
 client.on(Events.InteractionCreate, async interaction => {
-	// disconnectMember(memberId);
 	console.log(interaction.type);
+
+	disconnectMember(memberId);
 
 	switch (interaction.type) {
 		case InteractionType.ApplicationCommand:
 			const { commandName } = interaction;
-
 			commands
 				.filter(command => command.data.name == commandName)[0]
 				.execute(interaction);
