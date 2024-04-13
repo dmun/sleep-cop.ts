@@ -16,6 +16,7 @@
     "@types/node": "^20.12.7",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
+    "esrun": "^3.2.26",
     "ffmpeg-static": "^5.2.0",
     "libsodium-wrappers": "^0.7.13",
     "sequelize": "^6.37.2",
@@ -24,7 +25,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "bun run src/index.ts",
-    "fmt": "bunx prettier --write src/**/*.ts"
+    "dev": "esrun src/index.ts",
+    "fmt": "prettier --write src/**/*.ts"
   }
 }

@@ -63,10 +63,9 @@ function disconnectMember(memberId: string) {
 						noSubscriber: NoSubscriberBehavior.Pause,
 					},
 				});
+
 				player.on("stateChange", (oldState, newState) => {
-					console.log(
-						`Audio player transitioned from ${oldState.status} to ${newState.status}`,
-					);
+					console.log(`${oldState.status} -> ${newState.status}`);
 				});
 
 				const resource = createAudioResource("./untitled.ogg", {
@@ -78,20 +77,18 @@ function disconnectMember(memberId: string) {
 
 				resource.volume?.setVolume(0.5);
 
-				console.log("playable: ", player.checkPlayable());
 				player.unpause();
+
+				console.log("playable: ", player.checkPlayable());
 				player.play(resource);
 				const subscription = connection.subscribe(player);
-				// console.log(generateDependencyReport());
 
-				// console.log(player.state);
-
-				// if (subscription) {
-				// 	setTimeout(() => {
-				// 		subscription.unsubscribe();
-				// 		connection.destroy();
-				// 	}, 5_000);
-				// }
+				if (subscription) {
+					setTimeout(() => {
+						subscription.unsubscribe();
+						connection.destroy();
+					}, 5_000);
+				}
 			}
 		});
 	});
