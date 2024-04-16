@@ -11,6 +11,8 @@ import commands from "./commands";
 import { Bedtimes, Tags } from "./database";
 import { timeSubmitHandler } from "./handlers/time-submit";
 import {
+	AudioPlayer,
+	AudioPlayerError,
 	AudioPlayerStatus,
 	NoSubscriberBehavior,
 	StreamType,
@@ -19,6 +21,7 @@ import {
 	generateDependencyReport,
 	joinVoiceChannel,
 } from "@discordjs/voice";
+import { join } from "node:path";
 
 const client = new Client({
 	intents: [
@@ -50,45 +53,27 @@ function disconnectMember(memberId: string) {
 	client.guilds.cache.find(guild => {
 		guild.members.cache.forEach(member => {
 			if (member.id === memberId) {
-				// member.voice.disconnect();
+				const player = createAudioPlayer();
 				const connection = joinVoiceChannel({
 					channelId: member.voice.channelId!!,
 					guildId: guild.id,
 					adapterCreator: guild.voiceAdapterCreator,
 					selfDeaf: false,
 				});
+				const resource = createAudioResource(
+					join(__dirname, "sounds/reverb_fart.ogg"),
+				);
 
-				const player = createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Pause,
-					},
-				});
-
-				player.on("stateChange", (oldState, newState) => {
-					console.log(`${oldState.status} -> ${newState.status}`);
-				});
-
-				const resource = createAudioResource("./untitled.ogg", {
-					inputType: StreamType.Opus,
-					metadata: {
-						title: "DIOPJWAPJOIDAWJOPIWADJPADWIO",
-					},
-				});
-
-				resource.volume?.setVolume(0.5);
-
-				player.unpause();
-
-				console.log("playable: ", player.checkPlayable());
-				player.play(resource);
 				const subscription = connection.subscribe(player);
+				player.play(resource);
 
 				if (subscription) {
 					setTimeout(() => {
 						subscription.unsubscribe();
-						connection.destroy();
-					}, 5_000);
+					}, resource.playbackDuration - 300);
 				}
+
+				connection.destroy();
 			}
 		});
 	});
@@ -135,6 +120,6 @@ function checktime() {
 	}
 }
 
-setInterval(checktime, 5000);
+// setInterval(checktime, 5000);
 
 client.login(config.SLEEP_COP_TOKEN);
