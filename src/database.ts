@@ -1,4 +1,13 @@
-import { ARRAY, INTEGER, STRING, Sequelize } from "sequelize";
+import {
+	ARRAY,
+	INTEGER,
+	Model,
+	STRING,
+	Sequelize,
+	type CreationOptional,
+	type InferAttributes,
+	type InferCreationAttributes,
+} from "sequelize";
 
 export const sequelize = new Sequelize("database", "user", "passwsord", {
 	host: "localhost",
@@ -33,6 +42,13 @@ export const Bedtimes = sequelize.define("bedtimes", {
 		defaultValue: "",
 	},
 });
+
+export class User extends Model<
+	InferAttributes<User>,
+	InferCreationAttributes<User>
+> {
+	declare id: CreationOptional<string>;
+}
 
 export const Tags = sequelize.define("tags", {
 	username: STRING,

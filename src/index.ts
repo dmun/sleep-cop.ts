@@ -22,6 +22,7 @@ import {
 	joinVoiceChannel,
 } from "@discordjs/voice";
 import { join } from "node:path";
+import cron from "node-cron";
 
 const client = new Client({
 	intents: [
@@ -96,5 +97,20 @@ client.on(Events.InteractionCreate, async interaction => {
 			break;
 	}
 });
+
+async function startJobs() {
+	const bedtimes = await Bedtimes.findAll();
+	bedtimes.forEach(bedtime => {
+		const memberId = bedtime.get("member_id");
+		const hour = bedtime.get("hour");
+		const minute = bedtime.get("minute");
+		console.log(`running task for ${memberId} scheduled for ${hour}:${minute}`);
+		cron.schedule(`${minute} ${hour} * * *`, () => {
+			console.log("bruh");
+		});
+	});
+}
+
+startJobs();
 
 client.login(config.SLEEP_COP_TOKEN);
