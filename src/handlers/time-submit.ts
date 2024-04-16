@@ -11,7 +11,6 @@ export const timeSubmitHandler: InteractionHandler<StringSelectMenuInteraction> 
 			if (!userId) return;
 
 			const days = interaction.values.join(",");
-
 			await Bedtimes.update({ days: days }, { where: { member_id: userId } });
 		},
 	};

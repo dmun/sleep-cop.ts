@@ -82,8 +82,6 @@ function disconnectMember(memberId: string) {
 client.on(Events.InteractionCreate, async interaction => {
 	console.log(interaction.type);
 
-	disconnectMember(memberId);
-
 	switch (interaction.type) {
 		case InteractionType.ApplicationCommand:
 			const { commandName } = interaction;
@@ -95,31 +93,8 @@ client.on(Events.InteractionCreate, async interaction => {
 			if (interaction.isButton()) {
 				interaction.update("bruh");
 			}
-
-			if (interaction.isStringSelectMenu()) {
-				timeSubmitHandler.execute(interaction);
-			}
-
-			break;
-		case InteractionType.ModalSubmit:
-			if (interaction.isModalSubmit()) {
-			}
 			break;
 	}
 });
-
-function checktime() {
-	const now = new Date();
-	const hour = now.getHours();
-	const minute = now.getMinutes();
-
-	console.log(`${hour}:${minute}`);
-
-	if (hour === 21 && minute === 0) {
-		console.log("bruh");
-	}
-}
-
-// setInterval(checktime, 5000);
 
 client.login(config.SLEEP_COP_TOKEN);

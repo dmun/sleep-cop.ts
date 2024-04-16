@@ -68,13 +68,37 @@ export const setBedtimeCommand: Command = {
 			minute: minute,
 		});
 
-		console.log(
-			await Bedtimes.findOne({ where: { member_id: interaction.user.id } }),
-		);
-
-		interaction.reply({
+		const response = await interaction.reply({
 			content: `You selected a bed time of **${hour}:${minute}**!\n\nOn which days would you like to enforce it?`,
 			components: [row],
 		});
+
+		const collectorFilter = (i: any) => i.user.id === interaction.user.id;
+
+		try {
+			const selectInteraction = await response.awaitMessageComponent({
+				filter: collectorFilter,
+				time: 60_000,
+			});
+
+			if (!selectInteraction.isStringSelectMenu()) return;
+
+			const days = selectInteraction.values.join(",");
+			await Bedtimes.update(
+				{ days: days },
+				{ where: { member_id: selectInteraction.user.id } },
+			);
+
+			await selectInteraction.update({
+				content: "ok broer 👍👍👍",
+				components: [],
+			});
+		} catch (e) {
+			await interaction.editReply({
+				content:
+					"bedtijd kiezen gefaald! je hebt een minuut niks gedaan nu mag het niet meer!",
+				components: [],
+			});
+		}
 	},
 };
