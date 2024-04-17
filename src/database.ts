@@ -7,7 +7,7 @@ export const sequelize = new Sequelize("database", "user", "passwsord", {
 	storage: "database.sqlite",
 });
 
-export const Bedtimes = sequelize.define("bedtimes", {
+export const Bedtime = sequelize.define("bedtime", {
 	member_id: {
 		type: STRING,
 		primaryKey: true,

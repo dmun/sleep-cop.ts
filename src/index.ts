@@ -9,7 +9,7 @@ import {
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
-import { Bedtimes } from "./database";
+import { Bedtime } from "./database";
 import {
 	createAudioPlayer,
 	createAudioResource,
@@ -29,7 +29,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, readyClient => {
-	Bedtimes.sync();
+	Bedtime.sync();
 	const permissions = 39584887996432;
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	console.log(
@@ -101,7 +101,7 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 async function startJobs() {
-	const bedtimes = await Bedtimes.findAll();
+	const bedtimes = await Bedtime.findAll();
 	bedtimes.forEach(bedtime => {
 		const memberId = bedtime.get("member_id");
 		const hour = bedtime.get("hour");

@@ -7,7 +7,7 @@ import {
 	StringSelectMenuOptionBuilder,
 } from "discord.js";
 import type { Command } from "../types";
-import { Bedtimes } from "../database";
+import { Bedtime } from "../database";
 
 export const setBedtimeCommand: Command = {
 	data: new SlashCommandBuilder()
@@ -60,7 +60,7 @@ export const setBedtimeCommand: Command = {
 		const minute = interaction.options.data.find(x => x.name === "minute")!!
 			.value;
 
-		await Bedtimes.upsert({
+		await Bedtime.upsert({
 			member_id: interaction.user.id,
 			hour: hour,
 			minute: minute,
@@ -82,7 +82,7 @@ export const setBedtimeCommand: Command = {
 			if (!selectInteraction.isStringSelectMenu()) return;
 
 			const days = selectInteraction.values.join(",");
-			await Bedtimes.update(
+			await Bedtime.update(
 				{ days: days },
 				{ where: { member_id: selectInteraction.user.id } },
 			);
