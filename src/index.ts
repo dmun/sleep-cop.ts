@@ -1,22 +1,10 @@
-import {
-	Client,
-	Events,
-	GatewayIntentBits,
-	Guild,
-	GuildMember,
-	InteractionType,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, InteractionType } from "discord.js";
 import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
 import { Bedtime } from "./database";
-import {
-	createAudioPlayer,
-	createAudioResource,
-	joinVoiceChannel,
-} from "@discordjs/voice";
-import { join } from "node:path";
 import cron from "node-cron";
+import { playSound } from "./audio-player";
 
 const client = new Client({
 	intents: [
@@ -33,7 +21,7 @@ client.once(Events.ClientReady, readyClient => {
 	const permissions = 39584887996432;
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	console.log(
-		`\nInvite link: https://discord.com/api/oauth2/authorize?client_id=${config.SLEEP_COP_CLIENT_ID}&permissions=${permissions}&scope=bot%20applications.commands`,
+		`\nInvite link:\nhttps://discord.com/api/oauth2/authorize?client_id=${config.SLEEP_COP_CLIENT_ID}&permissions=${permissions}&scope=bot%20applications.commands\n`,
 	);
 });
 
@@ -51,41 +39,6 @@ function disconnectMember(memberId: string) {
 			}
 		});
 	});
-}
-
-function playSound(member: GuildMember, guild: Guild, path: string) {
-	if (!member.voice.channelId) {
-		console.log(`disconnectMember: ${member.nickname} voice channel not found`);
-		return;
-	}
-
-	const connection = joinVoiceChannel({
-		channelId: member.voice.channelId,
-		guildId: guild.id,
-		adapterCreator: guild.voiceAdapterCreator,
-		selfDeaf: false,
-	});
-	const player = createAudioPlayer();
-	const resource = createAudioResource(join(__dirname, path));
-
-	player.on("stateChange", interaction => {
-		console.log(`playSound: ${interaction.status}`);
-	});
-
-	const subscription = connection.subscribe(player);
-	player.play(resource);
-
-	if (subscription) {
-		setTimeout(async () => {
-			await member.voice.disconnect();
-			console.log(`disconnectMember: succeeded`);
-		}, 3300);
-
-		setTimeout(() => {
-			subscription.unsubscribe();
-			connection.destroy();
-		}, 5000);
-	}
 }
 
 client.on(Events.InteractionCreate, async interaction => {
