@@ -31,20 +31,18 @@ export const setBedtimeCommand: Command = {
 		),
 
 	async execute(interaction: CommandInteraction<CacheType>) {
-		const days = [
-			"monday",
-			"tuesday",
-			"wednesday",
-			"thursday",
-			"friday",
-			"saturday",
-			"sunday",
-		];
+		const days = {
+			1: "Monday",
+			2: "Tuesday",
+			3: "Wednesday",
+			4: "Thursday",
+			5: "Friday",
+			6: "Saturday",
+			7: "Sunday",
+		};
 
-		const daysOptions = days.map(day => {
-			return new StringSelectMenuOptionBuilder()
-				.setLabel(day.charAt(0).toUpperCase() + day.slice(1))
-				.setValue(day);
+		const daysOptions = Object.entries(days).map(([key, value]) => {
+			return new StringSelectMenuOptionBuilder().setLabel(value).setValue(key);
 		});
 
 		const daySelect = new StringSelectMenuBuilder()
