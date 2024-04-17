@@ -8,6 +8,7 @@ import {
 } from "discord.js";
 import type { Command } from "../types";
 import { Bedtime } from "../database";
+import { refreshJob } from "../cron";
 
 export const setBedtimeCommand: Command = {
 	data: new SlashCommandBuilder()
@@ -86,6 +87,8 @@ export const setBedtimeCommand: Command = {
 				{ days: days },
 				{ where: { member_id: selectInteraction.user.id } },
 			);
+
+			refreshJob(selectInteraction.user.id);
 
 			await selectInteraction.update({
 				content: "ok broer 👍👍👍",

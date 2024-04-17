@@ -3,10 +3,9 @@ import { config } from "./config";
 import { deployCommands } from "./deploy-commands";
 import commands from "./commands";
 import { Bedtime } from "./database";
-import cron from "node-cron";
-import { playSound } from "./audio-player";
+import { startJobs } from "./cron";
 
-const client = new Client({
+export const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
@@ -18,6 +17,8 @@ const client = new Client({
 
 client.once(Events.ClientReady, readyClient => {
 	Bedtime.sync();
+	startJobs();
+
 	const permissions = 39584887996432;
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	console.log(
@@ -29,17 +30,9 @@ client.on(Events.GuildCreate, async guild => {
 	await deployCommands({ guildId: guild.id });
 });
 
-function disconnectMember(memberId: string) {
-	console.log(`disconnectMember: disconnecting member ${memberId}`);
-
-	client.guilds.cache.find(guild => {
-		guild.members.cache.forEach(member => {
-			if (member.id === memberId) {
-				playSound(member, guild, "sounds/reverb_fart.ogg");
-			}
-		});
-	});
-}
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+	console.log(newState.channelId);
+});
 
 client.on(Events.InteractionCreate, async interaction => {
 	console.log(`client.on: interaction ${interaction.type}`);
@@ -52,31 +45,5 @@ client.on(Events.InteractionCreate, async interaction => {
 			break;
 	}
 });
-
-async function startJobs() {
-	const bedtimes = await Bedtime.findAll();
-	bedtimes.forEach(bedtime => {
-		const memberId = bedtime.get("member_id");
-		const hour = bedtime.get("hour");
-		const minute = bedtime.get("minute");
-		const days = bedtime.get("days");
-
-		console.log(`running task for ${memberId} scheduled for ${hour}:${minute}`);
-
-		const cronExpr = `${minute} ${hour} * * ${days}`;
-		cron.schedule(
-			cronExpr,
-			() => {
-				disconnectMember(memberId as string);
-			},
-			{
-				recoverMissedExecutions: false,
-				timezone: "Europe/Amsterdam",
-			},
-		);
-	});
-}
-
-startJobs();
 
 client.login(config.SLEEP_COP_TOKEN);
